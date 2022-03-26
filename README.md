@@ -12,22 +12,22 @@
 
 <table>
     <tr height="160px">
-        <td align="center" width="130px">
+        <td align="center" width="160px">
             <a href="https://github.com/hamoci"><img height="130px" width="130px" src="https://avatars.githubusercontent.com/u/55676675?v=4"/></a><br>
             <a href="https://github.com/hamoci">hamoci</a><br>
             <a>Junhyuk Ha</a>
         </td>
-        <td align="center" width="130px">
+        <td align="center" width="160px">
             <a href="https://github.com/hmlee20"><img height="130px" width="130px" src="https://avatars.githubusercontent.com/u/102394680?v=4"/></a><br>
             <a href="https://github.com/hmlee20">hmlee20</a><br>
             <a>Hyemi Lee</a>
         </td>
-        <td align="center" width="130px">
+        <td align="center" width="160px">
             <a href="https://github.com/jeongwonh"><img height="130px" width="130px" src="https://avatars.githubusercontent.com/u/102364720?v=4"/></a><br>
             <a href="https://github.com/jeongwonh">jeongwonh</a><br>
             <a>Jeongwon Hwang</a>
         </td>
-        <td align="center" width="143px">
+        <td align="center" width="160px">
             <a href="https://github.com/metr0jw"><img height="130px" width="130px" src="https://avatars.githubusercontent.com/u/14201660?v=4"/></a><br>
             <a href="https://github.com/metr0jw">metr0jw</a><br>
             <a>Jiwoon Lee</a>
