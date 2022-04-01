@@ -2,6 +2,7 @@
 #include <vector> 
 #include "tabular.h" 
 #include "findpi.h"
+#include "min_bool_equation.h"
 
 int main(void)
 {
