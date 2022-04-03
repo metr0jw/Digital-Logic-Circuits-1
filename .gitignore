@@ -9,6 +9,8 @@
 *.lo
 *.o
 *.obj
+x64\
+x86\
 
 # Precompiled Headers
 *.gch
