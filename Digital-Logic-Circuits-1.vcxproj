@@ -141,10 +141,12 @@
   <ItemGroup>
     <ClCompile Include="findpi.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="min_bool_equation.cpp" />
     <ClCompile Include="tabular.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="findpi.h" />
+    <ClInclude Include="min_bool_equation.h" />
     <ClInclude Include="tabular.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
