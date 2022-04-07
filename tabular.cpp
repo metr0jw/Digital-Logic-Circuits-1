@@ -10,6 +10,7 @@ LogicExpr FileRead(const char file_name[])
 	
 	LogicExpr logic_expr;
 	logic_expr.minterm_num = 0;
+	logic_expr.bit_length = '0';
 	std::ifstream input_file;
 	input_file.open(file_name, std::ios::in);
 
