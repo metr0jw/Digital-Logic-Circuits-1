@@ -5,7 +5,7 @@
 #include "min_bool_equation.h"
 
 int main(void)
-{	/********** For Debug Only *************
+{	/********** For Debug Only *************/
 	std::vector<std::string> logic_expression;
 	std::vector<std::string> true_minterm;
 	std::vector<std::vector<int>> group
@@ -38,7 +38,7 @@ int main(void)
 	true_minterm.emplace_back("1110");
 
 	CalcMinExpr(true_minterm, logic_expression, group, 4);
-	*/
+	//*/
 
 	return 0;
 }
