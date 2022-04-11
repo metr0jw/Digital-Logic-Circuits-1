@@ -10,9 +10,11 @@ int main(void)
 	logic_expression.emplace_back("0122");
 	logic_expression.emplace_back("1201");
 	logic_expression.emplace_back("1010");
-	FindCost(logic_expression, 4);
-	*/
-	
+	FindCost(logic_expression, 4); */
+
+	LogicExpr logic_expression = FileRead("input_minterm.txt");
+	MakeImplicantTable(logic_expression); 
+
 
 	return 0;
 }
