@@ -4,12 +4,14 @@
 #include <string>
 #include <cmath>
 #include <map>
+#include <bitset>
 #include "min_bool_equation.h"
+#include "tabular.h"
 
 using ull = unsigned long long;
 using uint = unsigned int;
 
-std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minterm, const std::vector<std::string>& logic_expression, const std::vector<std::vector<int>>& group, const int bit_length) {
+std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minterm, const std::vector<PIs>& logic_expr) {
 	/*
 	* true_minterm : {"0000", "0100", "1101", ..., "1111"}
 	*****************************************************************
@@ -40,6 +42,22 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	* is_added : Petrick's method에서 해당 열에 남은 항이 추가되었는지 판별
 	* to_opt : Petrick's method에서 최적화시키려 하는 P의 sum of products
 	*/
+
+	std::vector<std::string> logic_expression;
+	std::vector<std::vector<int>> group;
+	std::vector<int> temp;
+
+	for (int idx = 0; idx < logic_expr.size(); idx++)
+	{
+		temp.clear();
+		logic_expression.push_back(logic_expr[idx].PI);
+		for(int group_size = 0; group_size < logic_expr[idx].true_minterm.size(); group_size++)
+		{
+			temp.push_back(std::bitset<64>(logic_expr[idx].true_minterm[group_size]).to_ullong());
+		}
+		group.push_back(temp);
+	}
+
 	const uint ROW = static_cast<uint>(logic_expression.size());
 	const uint COL = static_cast<uint>(true_minterm.size());
 	uint inner = 0;
@@ -50,7 +68,7 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	uint pi_idx = 0;
 	uint remainder = 0;
 	uint remainder_control = 0;
-	
+
 	std::map<uint, uint> mapped_col;
 	std::map<uint, uint> remapped_col;
 	std::map<uint, uint> mapped_row;
@@ -71,14 +89,13 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 		mapped_col[value] = col;
 		remapped_col[col] = value;
 	}
-	remapped_col.clear();
 
 	for (uint row = 0; row < ROW; row++)
 	{
 		inner = static_cast<uint>(group[row].size());
 		for (uint inn = 0; inn < inner; inn++)
 		{
-			table[row][mapped_col[group[row][inn]]] = true;
+			table[row][mapped_col.at(group[row][inn])] = true;
 		}
 	}
 
@@ -117,8 +134,6 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 			}
 		}
 	}
-	mapped_col.clear();
-	pi_list.clear();
 
 	// Prime Implicant 열 제거하고 남는 minterm 있는지 확인
 	for (uint col = 0; col < COL; col++, cnt = 0)
@@ -138,70 +153,72 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	}
 
 	// Petrick's method
-	for (uint col = 0; col < COL; col++)
+	if (remainder)
 	{
-		is_added = false;
-		petrick_temp = {};
-		for (uint row = 0; row < ROW; row++)
+		for (uint col = 0; col < COL; col++)
 		{
-			if (table[row][col])
+			is_added = false;
+			petrick_temp = {};
+			for (uint row = 0; row < ROW; row++)
 			{
-				petrick_temp.push_back(std::to_string(row));
-				is_added = true;
-				sort(petrick_temp.begin(), petrick_temp.end());
-				petrick_temp.erase(unique(petrick_temp.begin(), petrick_temp.end()), petrick_temp.end());
+				if (table[row][col])
+				{
+					petrick_temp.push_back(std::to_string(row));
+					is_added = true;
+					sort(petrick_temp.begin(), petrick_temp.end());
+					petrick_temp.erase(unique(petrick_temp.begin(), petrick_temp.end()), petrick_temp.end());
+				}
+			}
+			if (is_added)
+			{
+				petrick.push_back(petrick_temp);
 			}
 		}
-		if (is_added)
-		{
-			petrick.push_back(petrick_temp);
-		}
-	}
-	table.clear();
 
-	do
-	{
-		is_added = false;
+		do
+		{
+			is_added = false;
+			petrick_temp.clear();
+			for (uint col = 0; col < petrick[0].size(); col++)
+			{
+				for (uint inner = 0; inner < petrick[1].size(); inner++)
+				{
+					petrick_temp.push_back(petrick[0][col] + petrick[1][inner]);
+					is_added = true;
+				}
+			}
+			if (is_added)
+			{
+				petrick[0] = petrick_temp;
+			} petrick.erase(petrick.begin() + 1);
+		} while (petrick.size() > 1);
+
 		petrick_temp.clear();
-		for (uint col = 0; col < petrick[0].size(); col++)
+		petrick_bool_equation = petrick[0];
+		petrick.clear();
+
+		for (uint row = 0; row < petrick_bool_equation.size(); row++)
 		{
-			for (uint inner = 0; inner < petrick[1].size(); inner++)
+			std::sort(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end());
+			petrick_bool_equation[row].erase(std::unique(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end()), petrick_bool_equation[row].end());
+		}
+
+		uint min = UINT_MAX;
+		uint min_idx = 0;
+		for (uint idx = 0; idx < petrick_bool_equation.size(); idx++)
+		{
+			if (petrick_bool_equation[idx].size() < min)
 			{
-				petrick_temp.push_back(petrick[0][col] + petrick[1][inner]);
-				is_added = true;
+				min = petrick_bool_equation[idx].size();
+				min_idx = idx;
 			}
 		}
-		if (is_added)
+
+		for (uint idx = 0; idx < petrick_bool_equation[min_idx].size(); idx++)
 		{
-			petrick[0] = petrick_temp;
-		} petrick.erase(petrick.begin()+1);
-	} while (petrick.size() > 1);
-
-	petrick_temp.clear();
-	petrick_bool_equation = petrick[0];
-	petrick.clear();
-
-	for (uint row = 0; row < petrick_bool_equation.size(); row++)
-	{
-		std::sort(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end());
-		petrick_bool_equation[row].erase(std::unique(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end()), petrick_bool_equation[row].end());
+			min_logic_expression.push_back(logic_expression[petrick_bool_equation[min_idx][idx] - '0']);
+		} petrick_bool_equation.clear();
 	}
-
-	uint min = UINT_MAX;
-	uint min_idx = 0;
-	for (uint idx = 0; idx < petrick_bool_equation.size(); idx++)
-	{
-		if (petrick_bool_equation[idx].size() < min)
-		{
-			min = petrick_bool_equation[idx].size();
-			min_idx = idx;
-		}
-	}
-
-	for (uint idx = 0; idx < petrick_bool_equation[min_idx].size(); idx++)
-	{
-		min_logic_expression.push_back(logic_expression[petrick_bool_equation[min_idx][idx] - '0']);
-	} petrick_bool_equation.clear();
 
 
 	/* FOR DEBUG 
