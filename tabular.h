@@ -15,7 +15,13 @@ typedef struct _logic_expression
 	int bit_length;
 }LogicExpr;
 
+typedef struct _pi_s {
+	std::string PI;
+	std::vector<std::string> true_minterm;
+} PIs;
+
+bool ComparePIs(std::string pi, std::string minterm, int bit_length);
 LogicExpr FileRead(const char file_name[]);
-std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr);
+std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr);
 bool CompareMinterm(const StringData& data1, const StringData& data2);
 int FindHamOne(const std::string& str1, const std::string& str2, int bit_length);
