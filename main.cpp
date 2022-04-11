@@ -13,8 +13,7 @@ int main(void)
 	FindCost(logic_expression, 4); */
 
 	LogicExpr logic_expression = FileRead("input_minterm.txt");
-	MakeImplicantTable(logic_expression); 
-
+	std::vector<PIs> pis = MakeImplicantTable(logic_expression);
 
 	return 0;
 }

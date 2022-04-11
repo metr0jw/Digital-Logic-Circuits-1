@@ -37,14 +37,14 @@ LogicExpr FileRead(const char file_name[])
 	return logic_expr;
 }
 
-
-//TODO : True Minterm, PIs 반환 동시에
-std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr)
+std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr)
 {
-	std::vector<std::string> PIs;	//it will store stared elements.
+	PIs temp_pis;
+	std::vector<PIs> pis;
 	std::string temp_string;
 	std::vector<std::string> temp_column;
 	std::vector<char> check_column;
+	std::vector<std::string> true_minterm;	//true_minterm을 저장할 변수
 	char* check_ptr; //for performance
 	std::vector<std::vector<std::string>> column_table;
 	StringData* minterm_ptr = logic_expr.minterm.data(); //for performance
@@ -56,6 +56,11 @@ std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr)
 	//for (int i = 0; i < logic_expr.minterm_num; i++)
 	//	std::cout << logic_expr.minterm[i].minterm << "\n";
 
+	for (int i = 0; i < logic_expr.minterm_num; i++)
+		if (minterm_ptr[i].flag == 'm')	//true minterm을 찾음
+			true_minterm.push_back(minterm_ptr[i].minterm);
+
+
 	for (int i = 0; i < logic_expr.minterm_num; i++)	//column 1에 초기값 추가
 		temp_column.push_back(minterm_ptr[i].minterm); 
 	cur_minterm_num = logic_expr.minterm_num;
@@ -66,7 +71,6 @@ std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr)
 	int cur_pos = 0;	// column 내부의 minterm을 탐색할변수
 	int ham_distance = 0;	//FindHamOne 함수의 반환값을 저장
 	int cur_column = 0;	//현재 column의 위치
-	//int temp_num = 0; //임시로 minterm 개수 저장할것.
 	
 	/*For Debug Only*/
 	//std::cout << FindHamOne(str_ptr[1], str_ptr[2], logic_expr.bit_length) << "\n";
@@ -92,7 +96,14 @@ std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr)
 				}
 			}
 			if (check_ptr[cur_pos] == 0)
-				PIs.push_back(str_ptr[cur_pos]);
+			{
+				temp_pis.PI = str_ptr[cur_pos];
+				for (int i = 0; i < true_minterm.size(); i++)
+					if (ComparePIs(temp_pis.PI, true_minterm[i], logic_expr.bit_length))
+						temp_pis.true_minterm.push_back(true_minterm[i]);
+				pis.push_back(temp_pis);
+				temp_pis.true_minterm.clear();
+			}
 			cur_pos++;
 		}
 		
@@ -115,10 +126,23 @@ std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr)
 	}
 
 	/*for debug*/
-	for (int i = 0; i < PIs.size(); i++)
-		std::cout << PIs[i] << "\n";
+	/*for (int i = 0; i < pis.size(); i++)
+	{
+		std::cout << "PI : " << pis[i].PI << "\n";
+		for (int j = 0; j < pis[i].true_minterm.size(); j++)
+			std::cout << "TRUE MINTERM : " << pis[i].true_minterm[j] << "\n";
+	}*/
 
-	return PIs;
+	return pis;
+}
+
+bool ComparePIs(std::string pi, std::string minterm, int bit_length)
+{
+	bool is_equal = true;
+	for (int i = 0; i < bit_length; i++)
+		if ((pi[i] != minterm[i]) && (pi[i] != '2'))
+			return is_equal = false;
+	return is_equal;
 }
 
 bool CompareMinterm(const StringData& data1, const StringData& data2) //sort를 위한 비교함수.
