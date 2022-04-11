@@ -11,11 +11,13 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 {	//TODO : parameter가 string&이 아닐 가능성 있음.
 	//logic_expression : 논리식에서 true minterm들만 추출해서 저장할 변수
 	//bit_length : 하나의 minterm에서 존재할 수 있는 최대 bit수
+	const std::string const* logic_expr_ptr = logic_expression.data();
 	int cost = 0;
 	int minterm_num = 0;
 	int and_gate_cost = 0;
 	int or_gate_cost = 0;
 	int not_gate_cost = 0;
+	
 
 	char* is_not = new char[bit_length];
 	for (int i = 0; i < bit_length; i++) is_not[i] = 0; // 초기화
@@ -33,7 +35,7 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 		int literal_num = 0;
 		for (int count = 0; count < bit_length; count++)
 		{
-			if (logic_expression[i][count] != '2')	//product term의 literal 개수 구하기
+			if (logic_expr_ptr[i][count] != '2')	//product term의 literal 개수 구하기
 			{
 				literal_num++;
 				is_not[count] = 1;	//NOT gate 개수 구하기
@@ -46,11 +48,11 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 	for (int i = 0; i < bit_length; i++)
 		if (is_not[i] == 1) not_gate_cost += 2;	//not gate 개수 구하기
 
-	/* Debug Only 
+	/* Debug Only */
 	std::cout << "and : " << and_gate_cost << "\n";
 	std::cout << "or : " << or_gate_cost << "\n";
 	std::cout << "not : " << not_gate_cost << "\n";
-	*************/
+	/*************/
 	cost = and_gate_cost + or_gate_cost + not_gate_cost;
 
 	delete[] is_not;

@@ -5,11 +5,11 @@
 #include "min_bool_equation.h"
 
 int main(void)
-{	/********** For Debug Only *************/
+{
+  /********** For Debug Only *************/
 	std::vector<std::string> logic_expression;
-	std::vector<std::string> true_minterm;
-	std::vector<std::vector<int>> group
-	{
+  std::vector<std::string> true_minterm;
+	std::vector<std::vector<int>> group{
 		{{1}, {5}},
 		{{5}, {7}},
 		{{6}, {7}},
@@ -17,7 +17,15 @@ int main(void)
 		{{0}, {2}, {8}, {10}},
 		{{2}, {6}, {10}, {14}}
 	};
-	int bit_length = 4;
+  int bit_length = 4;
+
+	logic_expression.emplace_back("0122");
+	logic_expression.emplace_back("1201");
+	logic_expression.emplace_back("1010");
+	FindCost(logic_expression, 4);
+
+	LogicExpr logic_expression = FileRead("input_minterm.txt");
+	MakeImplicantTable(logic_expression); 
 
 	logic_expression.emplace_back("0201");
 	logic_expression.emplace_back("0121");
@@ -38,7 +46,6 @@ int main(void)
 	true_minterm.emplace_back("1110");
 
 	CalcMinExpr(true_minterm, logic_expression, group, 4);
-	//*/
-
+  
 	return 0;
 }
