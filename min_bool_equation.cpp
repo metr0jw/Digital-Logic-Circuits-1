@@ -9,7 +9,6 @@
 #include "tabular.h"
 
 using ull = unsigned long long;
-using uint = unsigned int;
 
 std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minterm, const std::vector<PIs>& logic_expr) {
 	/*
@@ -22,87 +21,77 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	* group : logic_expression의 크기와 같음, {[[0], [1]], [[5], [7]], [[6], [7]], [[0], [1], [8], [9]]}
 	* number of column : true minterm 개수
 	* number of row : logic expression 항 개수
-	* 
-	* row : logic expression의 크기
-	* col : true minterm의 개수
-	* inner : table 만드는 데 필요한 내부 loop 변수
+	*
+	* COL : true minterm의 개수
+	* ROW : logic expression의 크기
 	* is_available_pi : Prime Implicant 존재하는지 여부 판단, 이 변수 이용해 분기 제작
 	* pi_idx : Prime Implicant가 존재하는 row 변수
 	* mapped_col : 메모리 절약하기 위해 group 번호를 매핑
-	* remapped_col : mapped_col 번호를 원래대로 리매핑
-	* _group : group이 vector로 된 것을 set으로 중복 제거, 리스트 방식으로 접근
 	* min_logic_expression : minimum logic expression
 	* table : true minterm과 logic expression을 표현한 vector(true for x, false for none)
-	* remove_col : prime implicant 구하는 과정에서 해당 column이 지워졌는지 판단
 	* iter : vector를 iterator로 사용하기 위해 선언
 	* remainder : PI를 지우고 남은 minterm의 개수
+	* remainder_control : remainder와 비교(minimum value)
 	* petrick : Petrick's Method에서 모든 P의 곱
 	* petrick_bool_equation : Petrick's method에서 boolean equation을 계산하기 위한 string의 vector
-	* mapped_row : Petrick's Method에서 사용하는 mapped_row
 	* is_added : Petrick's method에서 해당 열에 남은 항이 추가되었는지 판별
 	* to_opt : Petrick's method에서 최적화시키려 하는 P의 sum of products
 	*/
+	std::vector<std::vector<ull>> group;
+	const ull COL = true_minterm.size();
+	const ull ROW = logic_expr.size();
+	std::vector<std::vector<bool>> table(ROW, std::vector<bool>(COL, false));
 
-	std::vector<std::string> logic_expression;
-	std::vector<std::vector<int>> group;
-	std::vector<int> temp;
-
-	for (int idx = 0; idx < logic_expr.size(); idx++)
-	{
-		temp.clear();
-		logic_expression.push_back(logic_expr[idx].PI);
-		for(int group_size = 0; group_size < logic_expr[idx].true_minterm.size(); group_size++)
-		{
-			temp.push_back(std::bitset<64>(logic_expr[idx].true_minterm[group_size]).to_ullong());
-		}
-		group.push_back(temp);
-	}
-
-	const uint ROW = static_cast<uint>(logic_expression.size());
-	const uint COL = static_cast<uint>(true_minterm.size());
-	uint inner = 0;
-	uint cnt = 0;
-	ull value;
 	bool is_available_pi = false;
 	bool is_added = false;
-	uint pi_idx = 0;
-	uint remainder = 0;
-	uint remainder_control = 0;
+	ull pi_idx = 0;
+	ull remainder = 0;
+	ull remainder_control = 0;
 
-	std::map<uint, uint> mapped_col;
-	std::map<uint, uint> remapped_col;
-	std::map<uint, uint> mapped_row;
-	std::vector<uint> pi_list;
-	std::vector<uint>::iterator iter_pi;
-	std::vector<uint>::iterator iter_temp;
+	std::map<std::string, ull> mapped_col;
+	std::vector<ull> pi_list;
+	std::vector<ull>::iterator iter_pi;
+	std::vector<ull>::iterator iter_temp;
 	std::vector<std::string> min_logic_expression;
-	std::vector<std::vector<bool>> table(ROW, std::vector<bool>(COL, false));
 	std::vector<std::vector<std::string>> petrick;
 	std::vector<std::string> petrick_bool_equation;
 	std::vector<std::string> petrick_temp;
 	std::vector<bool> to_opt;
 
-	// true minterm, logic expression 표현한 테이블 제작
-	for (uint col = 0; col < COL; col++)
+	std::vector<std::string> logic_expression;
+
+	for (ull col = 0; col < COL; col++)
 	{
-		value = std::stol(true_minterm[col], 0, 2);
-		mapped_col[value] = col;
-		remapped_col[col] = value;
+		mapped_col[true_minterm[col]] = col;
 	}
 
-	for (uint row = 0; row < ROW; row++)
+	for (int idx = 0; idx < logic_expr.size(); idx++)
 	{
-		inner = static_cast<uint>(group[row].size());
-		for (uint inn = 0; inn < inner; inn++)
+		std::vector<ull> temp;
+		temp.clear();
+		logic_expression.push_back(logic_expr[idx].PI);
+		for (ull group_size = 0; group_size < logic_expr[idx].true_minterm.size(); group_size++)
 		{
-			table[row][mapped_col.at(group[row][inn])] = true;
+			temp.push_back(mapped_col[logic_expr[idx].true_minterm[group_size]]);
+		}
+		group.push_back(temp);
+	}
+	mapped_col.clear();
+	
+	// true minterm, logic expression 표현한 테이블 제작
+	for (ull row = 0, inner = 0; row < ROW; row++)
+	{
+		inner = group[row].size();
+		for (ull inn = 0; inn < inner; inn++)
+		{
+			table[row][group[row][inn]] = true;
 		}
 	}
 
 	// Essential Prime Implicant 찾기
-	for (uint col = 0; col < COL; col++, cnt = 0)
+	for (ull col = 0, cnt = 0; col < COL; col++, cnt = 0)
 	{
-		for (uint row = 0; row < ROW; row++)
+		for (ull row = 0; row < ROW; row++)
 		{
 			if (table[row][col])
 			{
@@ -129,17 +118,18 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 				col_rm = group[*iter_pi][idx_temp];
 				for (int row = 0; row < ROW; row++)
 				{
-					table[row][mapped_col.at(col_rm)] = false;
+					table[row][col_rm] = false;
 				}
 			}
 		}
 	}
+	pi_list.clear();
 
 	// Prime Implicant 열 제거하고 남는 minterm 있는지 확인
-	for (uint col = 0; col < COL; col++, cnt = 0)
+	for (ull col = 0, cnt = 0; col < COL; col++, cnt = 0)
 	{
 		remainder = 0;
-		for (uint row = 0; row < ROW; row++)
+		for (ull row = 0; row < ROW; row++)
 		{
 			if (table[row][col])
 			{
@@ -155,11 +145,11 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	// Petrick's method
 	if (remainder)
 	{
-		for (uint col = 0; col < COL; col++)
+		for (ull col = 0; col < COL; col++)
 		{
 			is_added = false;
 			petrick_temp = {};
-			for (uint row = 0; row < ROW; row++)
+			for (ull row = 0; row < ROW; row++)
 			{
 				if (table[row][col])
 				{
@@ -179,9 +169,9 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 		{
 			is_added = false;
 			petrick_temp.clear();
-			for (uint col = 0; col < petrick[0].size(); col++)
+			for (ull col = 0; col < petrick[0].size(); col++)
 			{
-				for (uint inner = 0; inner < petrick[1].size(); inner++)
+				for (ull inner = 0; inner < petrick[1].size(); inner++)
 				{
 					petrick_temp.push_back(petrick[0][col] + petrick[1][inner]);
 					is_added = true;
@@ -197,15 +187,15 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 		petrick_bool_equation = petrick[0];
 		petrick.clear();
 
-		for (uint row = 0; row < petrick_bool_equation.size(); row++)
+		for (ull row = 0; row < petrick_bool_equation.size(); row++)
 		{
 			std::sort(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end());
 			petrick_bool_equation[row].erase(std::unique(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end()), petrick_bool_equation[row].end());
 		}
 
-		uint min = UINT_MAX;
-		uint min_idx = 0;
-		for (uint idx = 0; idx < petrick_bool_equation.size(); idx++)
+		ull min = ULLONG_MAX;
+		ull min_idx = 0;
+		for (ull idx = 0; idx < petrick_bool_equation.size(); idx++)
 		{
 			if (petrick_bool_equation[idx].size() < min)
 			{
@@ -214,25 +204,11 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 			}
 		}
 
-		for (uint idx = 0; idx < petrick_bool_equation[min_idx].size(); idx++)
+		for (ull idx = 0; idx < petrick_bool_equation[min_idx].size(); idx++)
 		{
 			min_logic_expression.push_back(logic_expression[petrick_bool_equation[min_idx][idx] - '0']);
 		} petrick_bool_equation.clear();
 	}
-
-
-	/* FOR DEBUG 
-	for (int row = 0; row < ROW; row++) {
-		inner = group[row].size();
-		for (int col = 0; col < COL; col++) {
-			std::cout << table[row][col] << " ";
-		} std::cout << "\n";
-	}
-	for (int size = 0; size < min_logic_expression.size(); size++)
-	{
-		std::cout << min_logic_expression[size] << " ";
-	} std::cout << "\n";
-	*/
 
 	return min_logic_expression;
 }
