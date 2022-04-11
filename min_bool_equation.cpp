@@ -65,7 +65,7 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	std::vector<bool> to_opt;
 
 	// true minterm, logic expression 표현한 테이블 제작
-	for (int col = 0; col < COL; col++)
+	for (uint col = 0; col < COL; col++)
 	{
 		value = std::stol(true_minterm[col], 0, 2);
 		mapped_col[value] = col;
@@ -73,21 +73,21 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	}
 	remapped_col.clear();
 
-	for (int row = 0; row < ROW; row++)
+	for (uint row = 0; row < ROW; row++)
 	{
-		inner = group[row].size();
-		for (int inn = 0; inn < inner; inn++)
+		inner = static_cast<uint>(group[row].size());
+		for (uint inn = 0; inn < inner; inn++)
 		{
 			table[row][mapped_col[group[row][inn]]] = true;
 		}
 	}
 
 	// Essential Prime Implicant 찾기
-	for (int col = 0; col< COL; col++, cnt = 0)
+	for (uint col = 0; col < COL; col++, cnt = 0)
 	{
-		for (int row = 0; row < ROW; row++)
+		for (uint row = 0; row < ROW; row++)
 		{
-			if (table[row][col] == true)
+			if (table[row][col])
 			{
 				cnt++;
 				pi_idx = row;
@@ -121,12 +121,12 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	pi_list.clear();
 
 	// Prime Implicant 열 제거하고 남는 minterm 있는지 확인
-	for (int col = 0; col < COL; col++, cnt = 0)
+	for (uint col = 0; col < COL; col++, cnt = 0)
 	{
 		remainder = 0;
-		for (int row = 0; row < ROW; row++)
+		for (uint row = 0; row < ROW; row++)
 		{
-			if (table[row][col] == true)
+			if (table[row][col])
 			{
 				remainder++;
 			}
@@ -138,13 +138,13 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	}
 
 	// Petrick's method
-	for (int col = 0; col < COL; col++)
+	for (uint col = 0; col < COL; col++)
 	{
 		is_added = false;
 		petrick_temp = {};
-		for (int row = 0; row < ROW; row++)
+		for (uint row = 0; row < ROW; row++)
 		{
-			if (table[row][col] == true)
+			if (table[row][col])
 			{
 				petrick_temp.push_back(std::to_string(row));
 				is_added = true;
@@ -163,9 +163,9 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	{
 		is_added = false;
 		petrick_temp.clear();
-		for (int col = 0; col < petrick[0].size(); col++)
+		for (uint col = 0; col < petrick[0].size(); col++)
 		{
-			for (int inner = 0; inner < petrick[1].size(); inner++)
+			for (uint inner = 0; inner < petrick[1].size(); inner++)
 			{
 				petrick_temp.push_back(petrick[0][col] + petrick[1][inner]);
 				is_added = true;
@@ -181,15 +181,15 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 	petrick_bool_equation = petrick[0];
 	petrick.clear();
 
-	for (int row = 0; row < petrick_bool_equation.size(); row++)
+	for (uint row = 0; row < petrick_bool_equation.size(); row++)
 	{
 		std::sort(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end());
 		petrick_bool_equation[row].erase(std::unique(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end()), petrick_bool_equation[row].end());
 	}
 
-	int min = 100000;
-	int min_idx = 0;
-	for (int idx = 0; idx < petrick_bool_equation.size(); idx++)
+	uint min = UINT_MAX;
+	uint min_idx = 0;
+	for (uint idx = 0; idx < petrick_bool_equation.size(); idx++)
 	{
 		if (petrick_bool_equation[idx].size() < min)
 		{
@@ -198,7 +198,7 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 		}
 	}
 
-	for (int idx = 0; idx < petrick_bool_equation[min_idx].size(); idx++)
+	for (uint idx = 0; idx < petrick_bool_equation[min_idx].size(); idx++)
 	{
 		min_logic_expression.push_back(logic_expression[petrick_bool_equation[min_idx][idx] - '0']);
 	} petrick_bool_equation.clear();
