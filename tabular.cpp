@@ -27,9 +27,6 @@ LogicExpr FileRead(const char file_name[])
 	{
 		input_file >> temp.flag;
 		input_file >> temp.minterm;
-		temp.num_of_hot = 0;	//minterm 내부의 1 개수 저장할 변수
-		temp.num_of_hot = FindHot(temp.minterm, logic_expr.bit_length);
-		//std::cout << temp.num_of_hot << "\n";
 		logic_expr.minterm.push_back(temp);
 		/*For Debug Only*/
 		//std::cout << logic_expr.minterm[logic_expr.minterm_num].flag << "\n" << logic_expr.minterm[logic_expr.minterm_num].minterm << "\n";
@@ -54,7 +51,7 @@ std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr)
 	std::string* str_ptr;
 	int cur_minterm_num = 0;	//현재 column에 몇 개의 minterm이 있는지 기록
 
-	std::sort(minterm_ptr, minterm_ptr + logic_expr.bit_length - 1, CompareMinterm);
+	std::sort(minterm_ptr, minterm_ptr + logic_expr.minterm_num - 1, CompareMinterm);
 	//For Debug Only//
 	//for (int i = 0; i < logic_expr.minterm_num; i++)
 	//	std::cout << logic_expr.minterm[i].minterm << "\n";
@@ -118,17 +115,10 @@ std::vector<std::string> MakeImplicantTable(LogicExpr& logic_expr)
 	}
 
 	/*for debug*/
-	/*for (int i = 0; i < PIs.size(); i++)
-		std::cout << PIs[i] << "\n";*/
+	for (int i = 0; i < PIs.size(); i++)
+		std::cout << PIs[i] << "\n";
 
 	return PIs;
-}
-
-int FindHot(std::string minterm, int bit_length)	//문자열 내의 1 개수를 찾는 함수
-{
-	int num_of_hot = 0;
-	for (int i = 0; i < bit_length; i++) if (minterm[i] == '1') num_of_hot++;
-	return num_of_hot;
 }
 
 bool CompareMinterm(const StringData& data1, const StringData& data2) //sort를 위한 비교함수.
