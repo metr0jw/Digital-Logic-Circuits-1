@@ -25,3 +25,4 @@ LogicExpr FileRead(const char file_name[]);
 std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr);
 bool CompareMinterm(const StringData& data1, const StringData& data2);
 int FindHamOne(const std::string& str1, const std::string& str2, int bit_length);
+int FindHot(std::string minterm, int bit_length);
