@@ -25,7 +25,7 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 	minterm_num = logic_expression.size();
 	//vector 내부의 minterm 개수 구하기
 	//TODO : 이거 안구하고 vector size로 구해도 될듯? (SOLVED)
-	std::cout << minterm_num << "\n";
+	//std::cout << minterm_num << "\n";
 	
 	if (minterm_num > 1)	//minterm이 2개 이상일때부터 N-input OR Gate
 		or_gate_cost = 6 + (2 * (minterm_num - 2));	//or gate 개수 구하기
@@ -35,7 +35,7 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 		int literal_num = 0;
 		for (int count = 0; count < bit_length; count++)
 		{
-			if (logic_expr_ptr[i][count] != '2')	//product term의 literal 개수 구하기
+			if (logic_expr_ptr[i][count] != '-')	//product term의 literal 개수 구하기
 			{
 				literal_num++;
 				is_not[count] = 1;	//NOT gate 개수 구하기
@@ -48,11 +48,11 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 	for (int i = 0; i < bit_length; i++)
 		if (is_not[i] == 1) not_gate_cost += 2;	//not gate 개수 구하기
 
-	/* Debug Only */
+	/* Debug Only
 	std::cout << "and : " << and_gate_cost << "\n";
 	std::cout << "or : " << or_gate_cost << "\n";
 	std::cout << "not : " << not_gate_cost << "\n";
-	/*************/
+	*/
 	cost = and_gate_cost + or_gate_cost + not_gate_cost;
 
 	delete[] is_not;

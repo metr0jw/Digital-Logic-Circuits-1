@@ -86,7 +86,7 @@ LogicExpr FileRead(const char file_name[])
 //				if (ham_distance != -1)
 //				{
 //					temp_string = str_ptr[cur_pos];
-//					temp_string[ham_distance] = '2';	//don't care로 만든다
+//					temp_string[ham_distance] = '-';	//don't care로 만든다
 //					/*For debug*/
 //					//std::cout << temp_string << "\n";
 //					//-------
@@ -212,7 +212,7 @@ std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr)
 					ham_distance = FindHamOne(table_ptr[i][j], table_ptr[i + 1][k], bit_length);
 					if (ham_distance != -1)
 					{
-						table_ptr[i][j][ham_distance] = '2';	//다른 1자리를 don't care로 만듬
+						table_ptr[i][j][ham_distance] = '-';	//다른 1자리를 don't care로 만듬
 						column.push_back(table_ptr[i][j]);
 						check_ptr[i][j] = 1;
 						check_ptr[i + 1][k] = 1;
@@ -248,7 +248,7 @@ std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr)
 		check_table.clear();
 	}
 	
-	/*for debug only*/
+	/*for debug only
 	//for (int i = 0; i <= logic_expr.bit_length; i++)
 	//{
 	//	for (int j = 0; j < column_table[i].size(); j++) std::cout << column_table[i][j] << "\n";
@@ -261,6 +261,7 @@ std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr)
 		for (int j = 0; j < pis[i].true_minterm.size(); j++)
 			std::cout << "TRUE MINTERM : " << pis[i].true_minterm[j] << "\n";
 	}
+	*/
 
 	return pis;
 }
@@ -276,7 +277,7 @@ bool ComparePIs(std::string pi, std::string minterm, int bit_length)
 {
 	bool is_equal = true;
 	for (int i = 0; i < bit_length; i++)
-		if ((pi[i] != minterm[i]) && (pi[i] != '2'))
+		if ((pi[i] != minterm[i]) && (pi[i] != '-'))
 			return is_equal = false;
 	return is_equal;
 }
