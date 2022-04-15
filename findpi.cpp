@@ -3,12 +3,12 @@
 #include "findpi.h"
 
 /***************************************************************
-*Logic Expression : Don't Care = 2 ex) not appeared in minterm *	
+*Logic Expression : Don't Care = - ex) not appeared in minterm *	
 *					     FALSE = 0 ex) A`					   *
 *					      TRUE = 1 ex) A					   *
 ****************************************************************/
 int FindCost(const std::vector<std::string>& logic_expression, const int bit_length)
-{	//TODO : parameter가 string&이 아닐 가능성 있음.
+{	
 	//logic_expression : 논리식에서 true minterm들만 추출해서 저장할 변수
 	//bit_length : 하나의 minterm에서 존재할 수 있는 최대 bit수
 	const std::string const* logic_expr_ptr = logic_expression.data();
@@ -21,10 +21,8 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 
 	char* is_not = new char[bit_length];
 	for (int i = 0; i < bit_length; i++) is_not[i] = 0; // 초기화
-	//for (std::vector<std::string>::const_iterator iter = logic_expression.begin(); iter != logic_expression.end(); iter++, minterm_num++);
 	minterm_num = logic_expression.size();
 	//vector 내부의 minterm 개수 구하기
-	//TODO : 이거 안구하고 vector size로 구해도 될듯? (SOLVED)
 	//std::cout << minterm_num << "\n";
 	
 	if (minterm_num > 1)	//minterm이 2개 이상일때부터 N-input OR Gate
