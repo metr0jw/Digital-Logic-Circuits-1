@@ -1,0 +1,76 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/simulation/modelsim
+vfulladder
+Z1 !s110 1654457898
+!i10b 1
+!s100 oRToRn17ACch?ZZTPC@8h0
+I0nEg85fdCnde5dmeS7Lg;3
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1654453390
+8C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/fulladder.v
+FC:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/fulladder.v
+L0 1
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1654457898.000000
+Z5 !s107 C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/fulladder.v|C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/rca_36b.v|
+Z6 !s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder|C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/rca_36b.v|
+!i113 1
+Z7 o-vlog01compat -work work
+Z8 !s92 -vlog01compat -work work +incdir+C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder
+Z9 tCvgOpt 0
+vrca_36b
+R1
+!i10b 1
+!s100 QTTd:ofhZZ7lah`kMgFZ?2
+I560Y0V7CabBiV?`n2ld^e1
+R2
+R0
+w1654452854
+8C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/rca_36b.v
+FC:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/rca_36b.v
+L0 2
+R3
+r1
+!s85 0
+31
+R4
+R5
+R6
+!i113 1
+R7
+R8
+R9
+vtb_rca_36b
+R1
+!i10b 1
+!s100 zAf1D_SKFmhGQ4gGeA5F_0
+IK5oP6f]zRU^_>P<K2TK_J3
+R2
+R0
+w1654457885
+8C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/tb_rca36.v
+FC:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/tb_rca36.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/tb_rca36.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder|C:/Users/metr0/code/Digital-Logic-Circuits-1/Ripple-Carry-Adder/tb_rca36.v|
+!i113 1
+R7
+R8
+R9
