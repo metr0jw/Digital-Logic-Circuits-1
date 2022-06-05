@@ -1,0 +1,5 @@
+01--
+1-01
+1010
+
+Cost (# of transistors): 40
