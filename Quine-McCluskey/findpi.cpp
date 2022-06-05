@@ -36,7 +36,8 @@ int FindCost(const std::vector<std::string>& logic_expression, const int bit_len
 			if (logic_expr_ptr[i][count] != '-')	//product term의 literal 개수 구하기
 			{
 				literal_num++;
-				is_not[count] = 1;	//NOT gate 개수 구하기
+				if(logic_expr_ptr[i][count] != '1')
+					is_not[count] = 1;	//NOT gate 개수 구하기
 			}
 
 		}

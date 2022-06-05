@@ -60,11 +60,13 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 
 	std::vector<std::string> logic_expression;
 
+	// 메모리 절약 위해 hash 테이블 이용해 column 축소
 	for (ull col = 0; col < COL; col++)
 	{
 		mapped_col[true_minterm[col]] = col;
 	}
 
+	// group이라는 변수에 prime implicant 만드는데 어떤 minterm 사용되었는지 매핑
 	for (int idx = 0; idx < logic_expr.size(); idx++)
 	{
 		std::vector<ull> temp;
@@ -77,6 +79,14 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 		group.push_back(temp);
 	}
 	mapped_col.clear();
+
+	// group의 중복 제거
+	for (int idx = 0; idx < group.size(); idx++)
+	{
+		sort(group[idx].begin(), group[idx].end());
+		group[idx].erase(std::unique(group[idx].begin(), group[idx].end()), group[idx].end());
+
+	}
 	
 	// true minterm, logic expression 표현한 테이블 제작
 	for (ull row = 0, inner = 0; row < ROW; row++)
@@ -187,6 +197,7 @@ std::vector<std::string> CalcMinExpr(const std::vector<std::string>& true_minter
 		petrick_bool_equation = petrick[0];
 		petrick.clear();
 
+		// 분배법칙 과정에서 중복된 minterm 제거
 		for (ull row = 0; row < petrick_bool_equation.size(); row++)
 		{
 			std::sort(petrick_bool_equation[row].begin(), petrick_bool_equation[row].end());

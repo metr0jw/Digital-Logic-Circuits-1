@@ -56,6 +56,7 @@ std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr)
 
 	std::vector<std::string> true_minterm;	//true_minterm을 저장할 변수
 	StringData* minterm_ptr = logic_expr.minterm.data(); //for performance
+	std::string temp;
 
 	for (int i = 0; i < logic_expr.minterm_num; i++)
 		if (minterm_ptr[i].flag == 'm')	//true minterm을 찾음
@@ -112,9 +113,10 @@ std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr)
 				{
 					ham_distance = FindHamOne(table_ptr[i][j], table_ptr[i + 1][k], bit_length);
 					if (ham_distance != -1)	//Hamming distance가 1이면
-					{
-						table_ptr[i][j][ham_distance] = '-';	//다른 1자리를 don't care로 만듬
-						column.push_back(table_ptr[i][j]);
+					{	
+						temp = table_ptr[i][j];
+						temp[ham_distance] = '-'; //다른 1자리를 don't care로 만듬
+						column.push_back(temp);
 						check_ptr[i][j] = 1;	//비교해서 Hamming distance가 1이면 갈매기표시.
 						check_ptr[i + 1][k] = 1;
 						size++;
@@ -155,14 +157,14 @@ std::vector<PIs> MakeImplicantTable(LogicExpr& logic_expr)
 	//	for (int j = 0; j < column_table[i].size(); j++) std::cout << column_table[i][j] << "\n";
 	//	std::cout << "\n";
 	//}
-
+	*/
 	for (int i = 0; i < pis.size(); i++)
 	{
 		std::cout << "PI : " << pis[i].PI << "\n";
 		for (int j = 0; j < pis[i].true_minterm.size(); j++)
 			std::cout << "TRUE MINTERM : " << pis[i].true_minterm[j] << "\n";
 	}
-	*/
+	
 
 	return pis;
 }
